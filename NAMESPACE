@@ -1,0 +1,5 @@
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)
+importFrom(stats, runif)
+importFrom(stats, rexp)
+useDynLib(CRFpackageRobust, .registration = TRUE)
