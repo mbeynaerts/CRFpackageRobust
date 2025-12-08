@@ -569,10 +569,18 @@ SimData <- function (K, cens.par = 0, alpha = c(3,5,1.5), weights = c(0.2,0.4,0.
 
   U <- copula::rCopula(K, mx)
 
-  margin_dist <- paste0("q", margin)
+  if(margin == "exp") {
+    T1 <- -log(U[,1])
+    T2 <- -log(U[,2])
+  } else if (margin == "unif") {
+    T1 <- 5*(1-U[,1])
+    T2 <- 5*(1-U[,2])
+  }
 
-  T1 <- get(margin_dist)(p = U[,1], lower.tail = FALSE, ...)
-  T2 <- get(margin_dist)(p = U[,2], lower.tail = FALSE, ...)
+  # margin_dist <- paste0("q", margin)
+  #
+  # T1 <- get(margin_dist)(p = U[,1], lower.tail = FALSE, ...)
+  # T2 <- get(margin_dist)(p = U[,2], lower.tail = FALSE, ...)
 
 
   if (cens.par > 0) {
