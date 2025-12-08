@@ -271,8 +271,8 @@ WoodTensor.predict <- function(t1, t2, fit, logCRF = TRUE) {
       var.robust <-  sapply(1:nrow(X), function(i) t(X[i,]) %*% fit$robustvcov %*% X[i,])
       var.robustdiv <- sapply(1:nrow(X), function(i) t(X[i,]) %*% (fit$robustvcov/length(t1)) %*% X[i,])
       return(data.frame(estimate = spline, se = se.logtheta, se.robust = ))
-    }
-    return(data.frame(estimate = spline, se = sqrt(var.logtheta), se.robust = sqrt(var.robust), se.robustdiv = sqrt(var.robustdiv)))
+    } else return(data.frame(estimate = spline, se = sqrt(var.logtheta), se.robust = sqrt(var.robust), se.robustdiv = sqrt(var.robustdiv)))
+
   } else return(exp(spline))
 
 
