@@ -797,7 +797,7 @@ efs.control <- function(lambda.tol = 1, REML.tol = 0.5, ll.tol = 0.01, maxiter =
        knot.margin = knot.margin)
 }
 
-nleqslv.control <- function(method = "Broyden", global = "hook") {
+nleqslv.control <- function(method = "Broyden", global = "cline") {
   list(method = method,
        global = global)
 }
