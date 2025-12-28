@@ -468,20 +468,20 @@ Hessian <- function (coef.vector, X1, X2, Sl = NULL, datalist) {
   # Tensor product spline
   logtheta <- WoodTensor(X1, X2, coef.vector = coef.vector)
 
-  hessian <- hessianNew(riskset1 = datalist$riskset1,
-                        riskset2 = datalist$riskset2,
-                        logtheta1 = c(t(logtheta)),
-                        logtheta2 = c(logtheta),
-                        delta1 = datalist$delta1,
-                        delta2 = datalist$delta2,
-                        I1 = datalist$I1,
-                        I2 = datalist$I2,
-                        I3 = datalist$I3,
-                        I4 = datalist$I4,
-                        X1 = X1,
-                        X2 = X2,
-                        idxN1 = datalist$idxN1 - 1,
-                        idxN2 = datalist$idxN2 - 1)
+  hessian <- hessian_fast(riskset1 = datalist$riskset1,
+                          riskset2 = datalist$riskset2,
+                          logtheta1 = c(t(logtheta)),
+                          logtheta2 = c(logtheta),
+                          delta1 = datalist$delta1,
+                          delta2 = datalist$delta2,
+                          I1 = datalist$I1,
+                          I2 = datalist$I2,
+                          I3 = datalist$I3,
+                          I4 = datalist$I4,
+                          X1 = X1,
+                          X2 = X2,
+                          idxN1 = datalist$idxN1 - 1,
+                          idxN2 = datalist$idxN2 - 1)
 
   if (!is.null(Sl)) hessian <- hessian + Sl
 

@@ -368,6 +368,53 @@ arma::mat hessianNew(const arma::colvec &riskset1,
 
 }
 
+arma::mat hessian_fast(
+    const arma::colvec& riskset1,
+    const arma::colvec& riskset2,
+    const arma::colvec& logtheta1,
+    const arma::colvec& logtheta2,
+    const arma::colvec& delta1,
+    const arma::colvec& delta2,
+    const arma::colvec& I1,
+    const arma::colvec& I2,
+    const arma::colvec& I3,
+    const arma::colvec& I4,
+    const arma::mat& X1,
+    const arma::mat& X2,
+    const arma::uvec& idxN1,
+    const arma::uvec& idxN2) {
+
+  arma::colvec common1(riskset1.size(), arma::fill::zeros), common2(riskset1.size(), arma::fill::zeros);
+
+  arma::colvec exp_neg1 = arma::exp(-logtheta1);
+  arma::colvec exp_neg2 = arma::exp(-logtheta2);
+
+  arma::colvec denom1 = arma::square((riskset1 - I2) % exp_neg1 + I2);
+  arma::colvec denom2 = arma::square((riskset2 - I4) % exp_neg2 + I4);
+
+  const double eps = 1e-12;
+  denom1.transform([&](double x){ return std::max(x, eps); });
+  denom2.transform([&](double x){ return std::max(x, eps); });
+
+  common1.elem(idxN1) =
+    -delta1.elem(idxN1) % I1.elem(idxN1) % I2.elem(idxN1) % (riskset1.elem(idxN1) - I2.elem(idxN1)) % exp_neg1.elem(idxN1) / denom1.elem(idxN1);
+
+  common2.elem(idxN2) =
+    -delta2.elem(idxN2) % I3.elem(idxN2) % I4.elem(idxN2) % (riskset2.elem(idxN2) - I4.elem(idxN2)) % exp_neg2.elem(idxN2) / denom2.elem(idxN2);
+
+   if (arma::all(common1 == 0) && arma::all(common2 == 0))
+      return arma::zeros(X1.n_cols * X2.n_cols,
+                         X1.n_cols * X2.n_cols);
+
+  arma::mat A1 = X1.t() * arma::diagmat(common1) * X1;
+  arma::mat A2 = X2.t() * X2;
+
+  arma::mat B1 = X1.t() * arma::diagmat(common2) * X1;
+  arma::mat B2 = X2.t() * X2;
+
+  return -arma::kron(A1, A2) - arma::kron(B1, B2);
+}
+
 
 // [[Rcpp::export]]
 NumericMatrix hessianPolyC(const NumericVector &riskset1,
